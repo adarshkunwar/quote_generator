@@ -1,10 +1,12 @@
 import { Elements, clamp } from "./utils.js";
 import { CONFIG } from "./config.js";
-import { createGradient } from "./background.js";
+import { createGradient, createGrain } from "./background.js";
 
 const { width, height } = CONFIG.canvas;
 const FONT_SIZE = CONFIG.line.font;
 const HANDLE_SIZE = CONFIG.line.handle;
+
+const clampFn = clamp(0, 255);
 
 const canvas = document.getElementById("cardCanvas") as HTMLCanvasElement;
 const ctx = canvas.getContext("2d")!;
@@ -25,8 +27,6 @@ els.setElements(
 els.addInputListener(draw);
 
 const bgCache = { key: "", canvas: document.createElement("canvas") };
-
-const { style, handle, font, italicFirst } = els.values;
 
 // ---------- background caching ----------
 
@@ -50,16 +50,7 @@ function drawPaperTexture(
 ) {
   createGradient(W, H, octx, CONFIG.color.gradient);
 
-  // film grain
-  const imgData = octx.getImageData(0, 0, W, H);
-  const d = imgData.data;
-  for (let i = 0; i < d.length; i += 4) {
-    const n = (Math.random() - 0.5) * 24;
-    d[i] = clamp(d[i]! + n);
-    d[i + 1] = clamp(d[i + 1]! + n);
-    d[i + 2] = clamp(d[i + 2]! + n);
-  }
-  octx.putImageData(imgData, 0, 0);
+  createGrain(W, H, octx, clampFn);
 
   // dark diagonal corner shadow (bottom-right), like the reference photo
   const rg = octx.createRadialGradient(
@@ -155,7 +146,7 @@ function fitFontSize(
 function draw() {
   canvas.width = width;
   canvas.height = height;
-  const { quote } = els.values;
+  const { style, handle, font, italicFirst, quote, align } = els.values;
 
   const fontFamily = font;
   const textColor = CONFIG.color.font;
@@ -164,7 +155,7 @@ function draw() {
   const bg = ensureBackground(width, height);
   ctx.drawImage(bg, 0, 0);
 
-  let boxX, boxY, boxW, boxH, align;
+  let boxX, boxY, boxW, boxH;
   boxX = width * 0.2;
   boxW = width * 0.64;
   boxY = height * 0.28;

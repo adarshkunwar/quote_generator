@@ -1,5 +1,9 @@
-export function clamp(v: number): number {
-  return Math.max(0, Math.min(255, v));
+export type TClamp = (value: number) => number;
+
+export function clamp(minimum: number, maximum: number): TClamp {
+  return function (value: number): number {
+    return Math.max(minimum, Math.min(maximum, value));
+  };
 }
 
 interface IElements {
