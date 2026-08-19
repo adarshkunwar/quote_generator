@@ -29,28 +29,6 @@ function ensureBackground(W, H) {
   return off;
 }
 
-function drawCleanBackground(octx, W, H, cardColor, bgColor) {
-  octx.clearRect(0, 0, W, H);
-  octx.fillStyle = bgColor || "#d6d6d6";
-  octx.fillRect(0, 0, W, H);
-
-  const cardMargin = 60;
-  const cardX = cardMargin,
-    cardY = cardMargin;
-  const cardW = W - cardMargin * 2,
-    cardH = H - cardMargin * 2;
-  const radius = 6;
-
-  octx.save();
-  octx.shadowColor = "rgba(0,0,0,0.15)";
-  octx.shadowBlur = 24;
-  octx.shadowOffsetY = 8;
-  roundRect(octx, cardX, cardY, cardW, cardH, radius);
-  octx.fillStyle = cardColor || "#ffffff";
-  octx.fill();
-  octx.restore();
-}
-
 function drawPaperTexture(octx, W, H) {
   const grad = octx.createLinearGradient(0, 0, W, H);
   grad.addColorStop(0, "#ececea");
