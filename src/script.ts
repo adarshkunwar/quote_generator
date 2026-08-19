@@ -29,15 +29,6 @@ const { style, handle, font, italicFirst } = els.values;
 
 // ---------- background caching ----------
 
-// function createGradient(W, H, octx, gradientArray) {
-//   const gradient = octx.createLinearGradient(0, 0, W, H);
-//   for (i in gradientArray) {
-//     gradient.addColorStop(i.colorStop, i.color);
-//   }
-//   octx.fillStyle = gradient;
-//   octx.fillRect(0, 0, W, H);
-// }
-
 function ensureBackground(W: number, H: number) {
   const key = [W, H].join("|");
   if (bgCache.key === key) return bgCache.canvas;
@@ -187,7 +178,7 @@ function draw() {
     quote,
     boxW,
     boxH,
-    parseInt(FONT_SIZE?.split("px")[0] ?? "") || 0,
+    FONT_SIZE,
     fontFamily,
     italicFirst,
   );
