@@ -1,21 +1,39 @@
-const canvas = document.getElementById("cardCanvas");
-const ctx = canvas.getContext("2d");
+const els = new Elements();
+els.setElements(
+  document.getElementById("cardCanvas"),
+  document.getElementById("cardCanvas").getContext("2d"),
+  document.getElementById("styleSelect"),
+  document.getElementById("quoteText"),
+  document.getElementById("handle"),
+  document.getElementById("fontSelect"),
+  document.getElementById("italicFirst"),
+  document.getElementById("alignSelect"),
+);
+els.addInputListener(draw);
 
-const els = {
-  style: document.getElementById("styleSelect"),
-  quote: document.getElementById("quoteText"),
-  handle: document.getElementById("handle"),
-  font: document.getElementById("fontSelect"),
-  italicFirst: document.getElementById("italicFirst"),
-  align: document.getElementById("alignSelect"),
-};
+const bgCache = { key: "", canvas: document.createElement("canvas") };
 
-const colorRow = document.getElementById("colorRow");
-const italicRow = document.getElementById("italicRow");
-const alignRowWrap = document.getElementById("alignRowWrap");
+const {
+  canvas,
+  ctx,
+  styleValue,
+  quoteValue,
+  handleValue,
+  fontValue,
+  italicFirst,
+  alignValue,
+} = els;
 
 // ---------- background caching ----------
-const bgCache = { key: "", canvas: document.createElement("canvas") };
+
+function createGradient(W, H, octx, gradientArray) {
+  const gradient = octx.createLinearGradient(0, 0, W, H);
+  for (i in gradientArray) {
+    gradient.addColorStop(i.colorStop, i.color);
+  }
+  octx.fillStyle = gradient;
+  octx.fillRect(0, 0, W, H);
+}
 
 function ensureBackground(W, H) {
   const key = [W, H].join("|");
@@ -151,15 +169,15 @@ function fitFontSize(
 
 // ---------- main draw ----------
 function draw() {
-  const style = els.style.value;
+  const style = styleValue;
   const [W, H] = CANVAS;
   canvas.width = W;
   canvas.height = H;
 
-  const fontFamily = els.font.value;
-  const textColor = TEXT_COLOR;
-  const handleColor = HANDLE_COLOR;
-  const italicFirst = els.italicFirst.checked;
+  const fontFamily = fontValue;
+  const textColor = CONFIG.color.font;
+  const handleColor = CONFIG.color.handle;
+  const italicFirst = els.italicFirst;
 
   const bg = ensureBackground(W, H);
   ctx.drawImage(bg, 0, 0);
@@ -170,7 +188,7 @@ function draw() {
     boxW = W * 0.64;
     boxY = H * 0.28;
     boxH = H * 0.34;
-    align = els.align.value;
+    align = alignValue;
   } else {
     const cardMargin = 60;
     boxX = cardMargin + 120;
@@ -180,7 +198,7 @@ function draw() {
     align = "center";
   }
 
-  const quote = els.quote.value.trim();
+  const quote = quoteValue.trim();
   const fit = fitFontSize(
     quote,
     boxW,
@@ -203,33 +221,15 @@ function draw() {
     textY += fit.size * fit.lineHeightRatio;
   });
 
-  const handle = els.handle.value.trim();
+  const handle = handleValue;
   if (handle) {
-    const margin = style === "paper" ? 50 : 60;
+    const margin = styleValue === "paper" ? 50 : 60;
     ctx.font = `${HANDLE_SIZE} "${fontFamily}"`;
     ctx.fillStyle = handleColor;
     const handleW = ctx.measureText(handle).width;
     ctx.fillText(handle, W - margin - handleW, H - margin);
   }
 }
-
-els.style.addEventListener("change", () => {
-  const style = els.style.value;
-  if (style === "paper") {
-    els.shape.value = "portrait34";
-    els.font.value = "EB Garamond";
-    els.italicFirst.checked = true;
-    els.align.value = "left";
-  } else {
-    els.shape.value = "square";
-    els.font.value = "Itim";
-  }
-  draw();
-});
-
-[els.quote, els.handle, els.font, els.italicFirst, els.align].forEach((el) =>
-  el.addEventListener("input", draw),
-);
 
 document.fonts.ready.then(() => {
   const fam = [
