@@ -1,4 +1,8 @@
-import type { TGradientElement } from "./config.js";
+import type {
+  TGradientElement,
+  TRadialGradientElement,
+  TVignetteElement,
+} from "./config.js";
 import type { TClamp } from "./utils.js";
 
 export function createGradient(
@@ -30,4 +34,32 @@ export function createGrain(
     d[i + 2] = clamp(d[i + 2]! + n);
   }
   octx.putImageData(imgData, 0, 0);
+}
+
+export function createVignette(
+  width: number,
+  height: number,
+  octx: CanvasRenderingContext2D,
+  vigenette: TVignetteElement,
+) {
+  let cw = width * vigenette.cx;
+  let ch = height * vigenette.cy;
+  let innerRadius = width * vigenette.innerRadius;
+  let outerRadius = width * vigenette.outerRadius;
+
+  const rg = octx.createRadialGradient(
+    cw,
+    ch,
+    innerRadius,
+    cw,
+    ch,
+    outerRadius,
+  );
+
+  vigenette.stops.forEach((s) => {
+    rg.addColorStop(s.stopAt, `rgba(${s.color},${s.opacity})`);
+  });
+
+  octx.fillStyle = rg;
+  octx.fillRect(0, 0, width, height);
 }

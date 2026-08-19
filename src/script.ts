@@ -1,6 +1,6 @@
 import { Elements, clamp } from "./utils.js";
 import { CONFIG } from "./config.js";
-import { createGradient, createGrain } from "./background.js";
+import { createGradient, createGrain, createVignette } from "./background.js";
 
 const { width, height } = CONFIG.canvas;
 const FONT_SIZE = CONFIG.line.font;
@@ -49,37 +49,9 @@ function drawPaperTexture(
   H: number,
 ) {
   createGradient(W, H, octx, CONFIG.color.gradient);
-
   createGrain(W, H, octx, clampFn);
-
-  // dark diagonal corner shadow (bottom-right), like the reference photo
-  const rg = octx.createRadialGradient(
-    W * 0.92,
-    H * 0.96,
-    W * 0.05,
-    W * 0.92,
-    H * 0.96,
-    W * 0.75,
-  );
-  rg.addColorStop(0, "rgba(8,8,8,0.8)");
-  rg.addColorStop(0.35, "rgba(8,8,8,0.28)");
-  rg.addColorStop(1, "rgba(8,8,8,0)");
-  octx.fillStyle = rg;
-  octx.fillRect(0, 0, W, H);
-
-  // soft light lift top-left
-  const rg2 = octx.createRadialGradient(
-    W * 0.12,
-    H * 0.08,
-    10,
-    W * 0.12,
-    H * 0.08,
-    W * 0.55,
-  );
-  rg2.addColorStop(0, "rgba(255,255,255,0.22)");
-  rg2.addColorStop(1, "rgba(255,255,255,0)");
-  octx.fillStyle = rg2;
-  octx.fillRect(0, 0, W, H);
+  createVignette(W, H, octx, CONFIG.color.vignette.shadow);
+  createVignette(W, H, octx, CONFIG.color.vignette.lift);
 }
 
 function wrapTextWithParagraphs(
