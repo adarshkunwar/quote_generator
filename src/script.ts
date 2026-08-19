@@ -1,5 +1,6 @@
 import { Elements, clamp } from "./utils.js";
 import { CONFIG } from "./config.js";
+import { createGradient } from "./background.js";
 
 const { width, height } = CONFIG.canvas;
 const FONT_SIZE = CONFIG.line.font;
@@ -47,12 +48,7 @@ function drawPaperTexture(
   W: number,
   H: number,
 ) {
-  const grad = octx.createLinearGradient(0, 0, W, H);
-  grad.addColorStop(0, "#ececea");
-  grad.addColorStop(0.5, "#e1e1de");
-  grad.addColorStop(1, "#d2d2cf");
-  octx.fillStyle = grad;
-  octx.fillRect(0, 0, W, H);
+  createGradient(W, H, octx, CONFIG.color.gradient);
 
   // film grain
   const imgData = octx.getImageData(0, 0, W, H);

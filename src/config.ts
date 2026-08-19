@@ -1,4 +1,4 @@
-type TGradientElement = {
+export type TGradientElement = {
   color: string;
   stopAt: number;
 };
