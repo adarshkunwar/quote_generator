@@ -1,51 +1,30 @@
 const canvas = document.getElementById("cardCanvas");
 const ctx = canvas.getContext("2d");
 
-const SHAPES = {
-  square: [1254, 1254],
-  portrait45: [1254, 1567],
-  portrait34: [1254, 1672],
-};
-
 const els = {
   style: document.getElementById("styleSelect"),
-  shape: document.getElementById("shapeSelect"),
   quote: document.getElementById("quoteText"),
   handle: document.getElementById("handle"),
   font: document.getElementById("fontSelect"),
   italicFirst: document.getElementById("italicFirst"),
   align: document.getElementById("alignSelect"),
-  cardColor: document.getElementById("cardColor"),
-  bgColor: document.getElementById("bgColor"),
-  textColor: document.getElementById("textColor"),
-  handleColor: document.getElementById("handleColor"),
-  fontSize: document.getElementById("fontSize"),
-  sizeVal: document.getElementById("sizeVal"),
 };
 
 const colorRow = document.getElementById("colorRow");
 const italicRow = document.getElementById("italicRow");
 const alignRowWrap = document.getElementById("alignRowWrap");
 
-function clamp(v) {
-  return Math.max(0, Math.min(255, v));
-}
-
 // ---------- background caching ----------
 const bgCache = { key: "", canvas: document.createElement("canvas") };
 
-function ensureBackground(W, H, style, cardColor, bgColor) {
-  const key = [W, H, style, cardColor, bgColor].join("|");
+function ensureBackground(W, H) {
+  const key = [W, H].join("|");
   if (bgCache.key === key) return bgCache.canvas;
   const off = bgCache.canvas;
   off.width = W;
   off.height = H;
   const octx = off.getContext("2d");
-  if (style === "paper") {
-    drawPaperTexture(octx, W, H);
-  } else {
-    drawCleanBackground(octx, W, H, cardColor, bgColor);
-  }
+  drawPaperTexture(octx, W, H);
   bgCache.key = key;
   return off;
 }
@@ -168,7 +147,7 @@ function fitFontSize(
   fontFamily,
   italicFirst,
 ) {
-  let size = startSize;
+  let size = parseInt(startSize.split("px")[0], 10);
   const lineHeightRatio = 1.42;
   while (size > 16) {
     const lines = wrapTextWithParagraphs(
@@ -195,24 +174,16 @@ function fitFontSize(
 // ---------- main draw ----------
 function draw() {
   const style = els.style.value;
-  const [W, H] = SHAPES[els.shape.value];
+  const [W, H] = CANVAS;
   canvas.width = W;
   canvas.height = H;
 
   const fontFamily = els.font.value;
-  const textColor = els.textColor.value || "#333333";
-  const handleColor = els.handleColor.value || "#9a9a9a";
-  const baseSize = parseInt(els.fontSize.value, 10);
-  els.sizeVal.textContent = baseSize + "px";
+  const textColor = TEXT_COLOR;
+  const handleColor = HANDLE_COLOR;
   const italicFirst = els.italicFirst.checked;
 
-  const bg = ensureBackground(
-    W,
-    H,
-    style,
-    els.cardColor.value,
-    els.bgColor.value,
-  );
+  const bg = ensureBackground(W, H);
   ctx.drawImage(bg, 0, 0);
 
   let boxX, boxY, boxW, boxH, align;
@@ -232,7 +203,15 @@ function draw() {
   }
 
   const quote = els.quote.value.trim();
-  const fit = fitFontSize(quote, boxW, boxH, baseSize, fontFamily, italicFirst);
+  const fit = fitFontSize(
+    quote,
+    boxW,
+    boxH,
+    FONT_SIZE,
+    fontFamily,
+    italicFirst,
+  );
+  console.log(fit, "fit");
   const totalTextHeight = fit.lines.length * fit.size * fit.lineHeightRatio;
   let textY = boxY + boxH / 2 - totalTextHeight / 2 + fit.size;
 
@@ -249,23 +228,10 @@ function draw() {
   const handle = els.handle.value.trim();
   if (handle) {
     const margin = style === "paper" ? 50 : 60;
-    ctx.font = `${Math.round(baseSize * 0.4)}px "${fontFamily}"`;
+    ctx.font = `${HANDLE_SIZE} "${fontFamily}"`;
     ctx.fillStyle = handleColor;
     const handleW = ctx.measureText(handle).width;
     ctx.fillText(handle, W - margin - handleW, H - margin);
-  }
-}
-
-function syncStyleUI() {
-  const style = els.style.value;
-  if (style === "paper") {
-    colorRow.classList.add("hidden");
-    italicRow.classList.remove("hidden");
-    alignRowWrap.classList.remove("hidden");
-  } else {
-    colorRow.classList.remove("hidden");
-    italicRow.classList.add("hidden");
-    alignRowWrap.classList.add("hidden");
   }
 }
 
@@ -276,33 +242,16 @@ els.style.addEventListener("change", () => {
     els.font.value = "EB Garamond";
     els.italicFirst.checked = true;
     els.align.value = "left";
-    els.textColor.value = "#2a2a2a";
-    els.fontSize.value = 40;
   } else {
     els.shape.value = "square";
     els.font.value = "Itim";
-    els.textColor.value = "#333333";
-    els.fontSize.value = 46;
   }
-  syncStyleUI();
   draw();
 });
 
-[
-  els.shape,
-  els.quote,
-  els.handle,
-  els.font,
-  els.italicFirst,
-  els.align,
-  els.cardColor,
-  els.bgColor,
-  els.textColor,
-  els.handleColor,
-  els.fontSize,
-].forEach((el) => el.addEventListener("input", draw));
-
-syncStyleUI();
+[els.quote, els.handle, els.font, els.italicFirst, els.align].forEach((el) =>
+  el.addEventListener("input", draw),
+);
 
 document.fonts.ready.then(() => {
   const fam = [

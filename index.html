@@ -16,26 +16,16 @@
   <div class="wrap">
     <div class="panel">
       <h1>Quote Card Generator</h1>
-      <p class="sub">Fill in the fields — the preview updates live. Download when it looks right.</p>
-
       <label>Style</label>
       <select id="styleSelect">
         <option value="clean" selected>Clean Card (white card, centered)</option>
         <option value="paper">Paper Texture (photo-style, italic lead-in)</option>
       </select>
-
-      <label>Canvas shape</label>
-      <select id="shapeSelect">
-        <option value="square">Square (1:1)</option>
-        <option value="portrait45">Portrait (4:5)</option>
-        <option value="portrait34">Portrait (3:4)</option>
-      </select>
-
       <label>Quote text</label>
-      <textarea id="quoteText">"You know you really love someone, when you don't hate them for breaking your
+      <textarea id="quoteText" rows=10>"You know you really love someone, when you don't hate them for breaking your
         heart"</textarea>
 
-      <label>Handle / signature (optional)</label>
+      <label>Watermark</label>
       <input type="text" id="handle" value="@mind0nlove">
 
       <label>Font</label>
@@ -71,28 +61,6 @@
         </select>
       </div>
 
-      <div class="row" id="colorRow">
-        <div>
-          <label>Card background</label>
-          <input type="text" id="cardColor" value="#ffffff">
-        </div>
-        <div>
-          <label>Outer background</label>
-          <input type="text" id="bgColor" value="#d6d6d6">
-        </div>
-      </div>
-
-      <div class="row">
-        <div>
-          <label>Text color</label>
-          <input type="text" id="textColor" value="#333333">
-        </div>
-        <div>
-          <label>Handle color</label>
-          <input type="text" id="handleColor" value="#9a9a9a">
-        </div>
-      </div>
-
       <label>Text size <span id="sizeVal"></span></label>
       <input type="range" id="fontSize" min="24" max="72" value="46">
 
@@ -104,8 +72,10 @@
     </div>
   </div>
 
-  <script src="script.js">
-  </script>
+  <script src="const.js"> </script>
+  <script src="utils.js"> </script>
+  <script src="script.js"> </script>
+
 </body>
 
 </html>
