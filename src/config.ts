@@ -1,4 +1,4 @@
-const CONFIG = {
+export const CONFIG = {
   canvas: {
     width: 1254,
     height: 1672,

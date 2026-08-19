@@ -1,47 +1,61 @@
+import { Elements, clamp } from "./utils.js";
+import { CONFIG } from "./config.js";
+
+const { width, height } = CONFIG.canvas;
+const FONT_SIZE = CONFIG.line.font;
+const HANDLE_SIZE = CONFIG.line.handle;
+
+const canvas = document.getElementById("cardCanvas") as HTMLCanvasElement;
+const ctx = canvas.getContext("2d")!;
+
 const els = new Elements();
+
 els.setElements(
-  document.getElementById("cardCanvas"),
-  document.getElementById("cardCanvas").getContext("2d"),
-  document.getElementById("styleSelect"),
-  document.getElementById("quoteText"),
-  document.getElementById("handle"),
-  document.getElementById("fontSelect"),
-  document.getElementById("italicFirst"),
-  document.getElementById("alignSelect"),
+  canvas,
+  ctx,
+  document.getElementById("styleSelect") as HTMLSelectElement,
+  document.getElementById("quoteText") as HTMLInputElement,
+  document.getElementById("handle") as HTMLInputElement,
+  document.getElementById("fontSelect") as HTMLSelectElement,
+  document.getElementById("italicFirst") as HTMLInputElement,
+  document.getElementById("alignSelect") as HTMLSelectElement,
 );
 
 els.addInputListener(draw);
 
 const bgCache = { key: "", canvas: document.createElement("canvas") };
 
-const { style, quote, handle, font, italicFirst, align } = els.values;
-const canvas = els.canvas;
-const ctx = els.ctx;
+const { style, handle, font, italicFirst } = els.values;
 
 // ---------- background caching ----------
 
-function createGradient(W, H, octx, gradientArray) {
-  const gradient = octx.createLinearGradient(0, 0, W, H);
-  for (i in gradientArray) {
-    gradient.addColorStop(i.colorStop, i.color);
-  }
-  octx.fillStyle = gradient;
-  octx.fillRect(0, 0, W, H);
-}
+// function createGradient(W, H, octx, gradientArray) {
+//   const gradient = octx.createLinearGradient(0, 0, W, H);
+//   for (i in gradientArray) {
+//     gradient.addColorStop(i.colorStop, i.color);
+//   }
+//   octx.fillStyle = gradient;
+//   octx.fillRect(0, 0, W, H);
+// }
 
-function ensureBackground(W, H) {
+function ensureBackground(W: number, H: number) {
   const key = [W, H].join("|");
   if (bgCache.key === key) return bgCache.canvas;
   const off = bgCache.canvas;
   off.width = W;
   off.height = H;
   const octx = off.getContext("2d");
+  if (!octx) throw new Error("no octx");
   drawPaperTexture(octx, W, H);
   bgCache.key = key;
   return off;
 }
 
-function drawPaperTexture(octx, W, H) {
+function drawPaperTexture(
+  octx: CanvasRenderingContext2D,
+  W: number,
+  H: number,
+) {
   const grad = octx.createLinearGradient(0, 0, W, H);
   grad.addColorStop(0, "#ececea");
   grad.addColorStop(0.5, "#e1e1de");
@@ -54,9 +68,9 @@ function drawPaperTexture(octx, W, H) {
   const d = imgData.data;
   for (let i = 0; i < d.length; i += 4) {
     const n = (Math.random() - 0.5) * 24;
-    d[i] = clamp(d[i] + n);
-    d[i + 1] = clamp(d[i + 1] + n);
-    d[i + 2] = clamp(d[i + 2] + n);
+    d[i] = clamp(d[i]! + n);
+    d[i + 1] = clamp(d[i + 1]! + n);
+    d[i + 2] = clamp(d[i + 2]! + n);
   }
   octx.putImageData(imgData, 0, 0);
 
@@ -90,26 +104,15 @@ function drawPaperTexture(octx, W, H) {
   octx.fillRect(0, 0, W, H);
 }
 
-function roundRect(c, x, y, w, h, r) {
-  c.beginPath();
-  c.moveTo(x + r, y);
-  c.arcTo(x + w, y, x + w, y + h, r);
-  c.arcTo(x + w, y + h, x, y + h, r);
-  c.arcTo(x, y + h, x, y, r);
-  c.arcTo(x, y, x + w, y, r);
-  c.closePath();
-}
-
-// ---------- text layout ----------
 function wrapTextWithParagraphs(
-  text,
-  maxWidth,
-  fontSizePx,
-  fontFamily,
-  italicFirst,
+  text: string,
+  maxWidth: number,
+  fontSizePx: number,
+  fontFamily: string,
+  italicFirst: boolean,
 ) {
   const paragraphs = text.split("\n");
-  const lines = [];
+  const lines: any[] = [];
   paragraphs.forEach((p, pi) => {
     const isItalic = italicFirst && pi === 0;
     ctx.font = `${isItalic ? "italic " : ""}${fontSizePx}px "${fontFamily}"`;
@@ -130,14 +133,14 @@ function wrapTextWithParagraphs(
 }
 
 function fitFontSize(
-  text,
-  boxWidth,
-  boxHeight,
-  startSize,
-  fontFamily,
-  italicFirst,
+  text: string,
+  boxWidth: number,
+  boxHeight: number,
+  startSize: number,
+  fontFamily: string,
+  italicFirst: boolean,
 ) {
-  let size = parseInt(startSize.split("px")[0], 10);
+  let size = startSize;
   const lineHeightRatio = 1.42;
   while (size > 16) {
     const lines = wrapTextWithParagraphs(
@@ -163,30 +166,28 @@ function fitFontSize(
 
 // ---------- main draw ----------
 function draw() {
-  const [W, H] = CANVAS;
-  canvas.width = W;
-  canvas.height = H;
+  canvas.width = width;
+  canvas.height = height;
   const { quote } = els.values;
 
   const fontFamily = font;
   const textColor = CONFIG.color.font;
   const handleColor = CONFIG.color.handle;
-  const italicFirst = els.italicFirst;
 
-  const bg = ensureBackground(W, H);
+  const bg = ensureBackground(width, height);
   ctx.drawImage(bg, 0, 0);
 
   let boxX, boxY, boxW, boxH, align;
-  boxX = W * 0.2;
-  boxW = W * 0.64;
-  boxY = H * 0.28;
-  boxH = H * 0.34;
+  boxX = width * 0.2;
+  boxW = width * 0.64;
+  boxY = height * 0.28;
+  boxH = height * 0.34;
 
   const fit = fitFontSize(
     quote,
     boxW,
     boxH,
-    FONT_SIZE,
+    parseInt(FONT_SIZE?.split("px")[0] ?? "") || 0,
     fontFamily,
     italicFirst,
   );
@@ -208,7 +209,7 @@ function draw() {
     ctx.font = `${HANDLE_SIZE} "${fontFamily}"`;
     ctx.fillStyle = handleColor;
     const handleW = ctx.measureText(handle).width;
-    ctx.fillText(handle, W - margin - handleW, H - margin);
+    ctx.fillText(handle, width - margin - handleW, height - margin);
   }
 }
 
@@ -226,7 +227,7 @@ document.fonts.ready.then(() => {
     "Cormorant Garamond",
     "Lora",
   ];
-  const jobs = [];
+  const jobs: any[] = [];
   fam.forEach((f) => {
     jobs.push(document.fonts.load(`46px "${f}"`));
     jobs.push(document.fonts.load(`italic 46px "${f}"`));
@@ -235,7 +236,7 @@ document.fonts.ready.then(() => {
   draw();
 });
 
-document.getElementById("downloadBtn").addEventListener("click", () => {
+document?.getElementById("downloadBtn")?.addEventListener("click", () => {
   const link = document.createElement("a");
   link.download = "quote-card.png";
   link.href = canvas.toDataURL("image/png");
