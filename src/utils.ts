@@ -1,5 +1,9 @@
-export function clamp(v: number): number {
-  return Math.max(0, Math.min(255, v));
+export type TClamp = (value: number) => number;
+
+export function clamp(minimum: number, maximum: number): TClamp {
+  return function (value: number): number {
+    return Math.max(minimum, Math.min(maximum, value));
+  };
 }
 
 interface IElements {
@@ -54,10 +58,14 @@ export class Elements implements IElements {
     this.align = align;
   }
 
+  normalizedText(input: string) {
+    return input.replace(/\\n/g, "\n");
+  }
+
   get values() {
     return {
       style: this.style?.value || "",
-      quote: this.quote?.value || "",
+      quote: this.normalizedText(this.quote?.value || ""),
       handle: this.handle?.value || "",
       font: this.font?.value || "",
       italicFirst: this.italicFirst?.checked || false,
