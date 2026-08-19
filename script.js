@@ -9,20 +9,14 @@ els.setElements(
   document.getElementById("italicFirst"),
   document.getElementById("alignSelect"),
 );
+
 els.addInputListener(draw);
 
 const bgCache = { key: "", canvas: document.createElement("canvas") };
 
-const {
-  canvas,
-  ctx,
-  styleValue,
-  quoteValue,
-  handleValue,
-  fontValue,
-  italicFirst,
-  alignValue,
-} = els;
+const { style, quote, handle, font, italicFirst, align } = els.values;
+const canvas = els.canvas;
+const ctx = els.ctx;
 
 // ---------- background caching ----------
 
@@ -169,12 +163,12 @@ function fitFontSize(
 
 // ---------- main draw ----------
 function draw() {
-  const style = styleValue;
   const [W, H] = CANVAS;
   canvas.width = W;
   canvas.height = H;
+  const { quote } = els.values;
 
-  const fontFamily = fontValue;
+  const fontFamily = font;
   const textColor = CONFIG.color.font;
   const handleColor = CONFIG.color.handle;
   const italicFirst = els.italicFirst;
@@ -183,22 +177,11 @@ function draw() {
   ctx.drawImage(bg, 0, 0);
 
   let boxX, boxY, boxW, boxH, align;
-  if (style === "paper") {
-    boxX = W * 0.2;
-    boxW = W * 0.64;
-    boxY = H * 0.28;
-    boxH = H * 0.34;
-    align = alignValue;
-  } else {
-    const cardMargin = 60;
-    boxX = cardMargin + 120;
-    boxW = W - cardMargin * 2 - 240;
-    boxY = cardMargin;
-    boxH = H - cardMargin * 2;
-    align = "center";
-  }
+  boxX = W * 0.2;
+  boxW = W * 0.64;
+  boxY = H * 0.28;
+  boxH = H * 0.34;
 
-  const quote = quoteValue.trim();
   const fit = fitFontSize(
     quote,
     boxW,
@@ -207,7 +190,6 @@ function draw() {
     fontFamily,
     italicFirst,
   );
-  console.log(fit, "fit");
   const totalTextHeight = fit.lines.length * fit.size * fit.lineHeightRatio;
   let textY = boxY + boxH / 2 - totalTextHeight / 2 + fit.size;
 
@@ -221,9 +203,8 @@ function draw() {
     textY += fit.size * fit.lineHeightRatio;
   });
 
-  const handle = handleValue;
   if (handle) {
-    const margin = styleValue === "paper" ? 50 : 60;
+    const margin = style === "paper" ? 50 : 60;
     ctx.font = `${HANDLE_SIZE} "${fontFamily}"`;
     ctx.fillStyle = handleColor;
     const handleW = ctx.measureText(handle).width;

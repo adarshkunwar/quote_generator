@@ -25,33 +25,27 @@ class Elements {
     this.align = align;
   }
 
-  get canvasContext() {
-    return this.canvas;
-  }
-  get styleValue() {
-    return this.style.value;
-  }
-  get quoteValue() {
-    return this.quote.value;
-  }
-  get handleValue() {
-    return this.handle.value;
-  }
-  get fontValue() {
-    return this.font.value;
-  }
-  get italicFirstChecked() {
-    return this.italicFirst.checked;
-  }
-  get alignValue() {
-    return this.align.value;
+  get values() {
+    return {
+      style: this.style.value,
+      quote: this.quote.value,
+      handle: this.handle.value,
+      font: this.font.value,
+      italicFirst: this.italicFirst.checked,
+      align: this.align.value,
+    };
   }
 
   addInputListener(callback) {
-    [this.style, this.handle, this.font, this.italicFirst, this.align].forEach(
-      (el) => {
-        el.addEventListener("input", callback);
-      },
-    );
+    [
+      this.style,
+      this.quote,
+      this.handle,
+      this.font,
+      this.italicFirst,
+      this.align,
+    ].forEach((el) => {
+      el.addEventListener("input", callback);
+    });
   }
 }
