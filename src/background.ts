@@ -1,8 +1,4 @@
-import type {
-  TGradientElement,
-  TRadialGradientElement,
-  TVignetteElement,
-} from "./config.js";
+import type { TGradientElement, TVignetteElement } from "./config.js";
 import type { TClamp } from "./utils.js";
 
 export function createGradient(
