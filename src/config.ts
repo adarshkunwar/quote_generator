@@ -60,7 +60,7 @@ export const CONFIG: TConfig = {
         innerRadius: 0.05,
         outerRadius: 0.75,
         stops: [
-          { color: "8,8,8", opacity: 0.8, stopAt: 0 },
+          { color: "8,8,8", opacity: 0.5, stopAt: 0 },
           { color: "8,8,8", opacity: 0.28, stopAt: 0.35 },
           { color: "8,8,8", opacity: 0, stopAt: 1 },
         ],
