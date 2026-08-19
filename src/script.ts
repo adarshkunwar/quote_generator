@@ -30,6 +30,7 @@ const bgCache = { key: "", canvas: document.createElement("canvas") };
 
 // ---------- background caching ----------
 
+// TODO: Might need to change this once we allow various wallpapers
 function ensureBackground(W: number, H: number) {
   const key = [W, H].join("|");
   if (bgCache.key === key) return bgCache.canvas;
@@ -119,6 +120,7 @@ function draw() {
   canvas.width = width;
   canvas.height = height;
   const { style, handle, font, italicFirst, quote, align } = els.values;
+  console.log(JSON.stringify(quote));
 
   const fontFamily = font;
   const textColor = CONFIG.color.font;

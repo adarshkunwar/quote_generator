@@ -58,10 +58,14 @@ export class Elements implements IElements {
     this.align = align;
   }
 
+  normalizedText(input: string) {
+    return input.replace(/\\n/g, "\n");
+  }
+
   get values() {
     return {
       style: this.style?.value || "",
-      quote: this.quote?.value || "",
+      quote: this.normalizedText(this.quote?.value || ""),
       handle: this.handle?.value || "",
       font: this.font?.value || "",
       italicFirst: this.italicFirst?.checked || false,
