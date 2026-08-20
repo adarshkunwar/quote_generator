@@ -2,9 +2,31 @@ import { Elements, clamp } from "./utils.js";
 import { CONFIG } from "./config.js";
 import { createGradient, createGrain, createVignette } from "./background.js";
 
-const { width, height } = CONFIG.canvas;
-const FONT_SIZE = CONFIG.line.font;
-const HANDLE_SIZE = CONFIG.line.handle;
+const configTextarea = document.getElementById(
+  "configText",
+) as HTMLTextAreaElement;
+configTextarea.value = JSON.stringify(CONFIG, null, 2);
+
+let config = CONFIG;
+
+if (configTextarea) {
+  configTextarea.value = JSON.stringify(CONFIG, null, 2);
+
+  configTextarea.addEventListener("change", () => {
+    try {
+      const parsed = JSON.parse(configTextarea.value);
+      Object.assign(CONFIG, parsed); // mutate in place so other modules keep the same reference
+      config = CONFIG;
+      draw();
+    } catch (err) {
+      alert(`Invalid config JSON: ${(err as Error).message}`);
+    }
+  });
+}
+
+const { width, height } = config.canvas;
+const FONT_SIZE = config.line.font;
+const HANDLE_SIZE = config.line.handle;
 
 const clampFn = clamp(0, 255);
 
@@ -26,21 +48,19 @@ els.setElements(
 
 els.addInputListener(draw);
 
-const bgCache = { key: "", canvas: document.createElement("canvas") };
+let canvasElement = document.createElement("canvas");
 
 // ---------- background caching ----------
 
 // TODO: Might need to change this once we allow various wallpapers
 function ensureBackground(W: number, H: number) {
   const key = [W, H].join("|");
-  if (bgCache.key === key) return bgCache.canvas;
-  const off = bgCache.canvas;
+  const off = canvasElement;
   off.width = W;
   off.height = H;
   const octx = off.getContext("2d");
   if (!octx) throw new Error("no octx");
   drawPaperTexture(octx, W, H);
-  bgCache.key = key;
   return off;
 }
 
@@ -49,10 +69,10 @@ function drawPaperTexture(
   W: number,
   H: number,
 ) {
-  createGradient(W, H, octx, CONFIG.color.gradient);
+  createGradient(W, H, octx, config.color.gradient);
   createGrain(W, H, octx, clampFn);
-  createVignette(W, H, octx, CONFIG.color.vignette.shadow);
-  createVignette(W, H, octx, CONFIG.color.vignette.lift);
+  createVignette(W, H, octx, config.color.vignette.shadow);
+  createVignette(W, H, octx, config.color.vignette.lift);
 }
 
 function wrapTextWithParagraphs(
@@ -123,8 +143,8 @@ function draw() {
   console.log(JSON.stringify(quote));
 
   const fontFamily = font;
-  const textColor = CONFIG.color.font;
-  const handleColor = CONFIG.color.handle;
+  const textColor = config.color.font;
+  const handleColor = config.color.handle;
 
   const bg = ensureBackground(width, height);
   ctx.drawImage(bg, 0, 0);
