@@ -1,6 +1,11 @@
 import { Elements, clamp } from "./utils.js";
 import { CONFIG } from "./config.js";
 import { createGradient, createGrain, createVignette } from "./background.js";
+import { generateAIPost } from "./ai.js";
+
+const generateButton = document.getElementById("generateQuote");
+
+generateButton?.addEventListener("click", () => generateAIPost());
 
 const configTextarea = document.getElementById(
   "configText",

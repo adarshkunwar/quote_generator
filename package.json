@@ -1,18 +1,19 @@
 {
   "name": "quote_generator",
   "version": "1.0.0",
-  "type" : "module",
+  "type": "module",
   "description": "",
   "main": "src/script.js",
   "scripts": {
     "test": "echo 'Error: no test specified' && exit 1",
     "build": "tsc",
-    "watch": "tsc --watch"
+    "dev": "tsc --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
+    "@types/node": "^26.2.0",
     "typescript": "^7.0.2"
   }
 }
