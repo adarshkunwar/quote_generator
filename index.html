@@ -9,75 +9,12 @@
   <link
     href="https://fonts.googleapis.com/css2?family=Itim&family=Just+Me+Again+Down+Here&family=Shantell+Sans:wght@500&family=Gochi+Hand&family=Caveat:wght@600&family=Nanum+Pen+Script&family=Advent+Pro:wght@400;600&family=EB+Garamond:ital,wght@0,400;0,600;1,400&family=Playfair+Display:ital,wght@0,600;1,400&family=Cormorant+Garamond:ital,wght@0,500;1,500&family=Lora:ital,wght@0,500;1,500&display=swap"
     rel="stylesheet">
-  <link href="./style.css" rel="stylesheet">
 </head>
 
 <body>
-  <div class="wrap">
-    <div class="panel">
-      <h1>Quote Card Generator</h1>
-      <label>Style</label>
-      <select id="styleSelect">
-        <option value="paper">Paper Texture (photo-style, italic lead-in)</option>
-      </select>
-      <label>Quote text</label>
-      <textarea id="quoteText" rows=10>"You know you really love someone, when you don't hate them for breaking your
-        heart"</textarea>
-
-      <label>Watermark</label>
-      <input type="text" id="handle" value="@mind0nlove">
-
-      <label>Font</label>
-      <select id="fontSelect">
-        <optgroup label="Handwriting">
-          <option value="Itim" selected>Itim (rounded marker)</option>
-          <option value="Shantell Sans">Shantell Sans</option>
-          <option value="Gochi Hand">Gochi Hand</option>
-          <option value="Caveat">Caveat</option>
-          <option value="Nanum Pen Script">Nanum Pen Script</option>
-          <option value="Just Me Again Down Here">Just Me Again Down Here</option>
-          <option value="Advent Pro">Advent Pro (tall/elegant)</option>
-        </optgroup>
-        <optgroup label="Serif (paper style)">
-          <option value="EB Garamond">EB Garamond</option>
-          <option value="Playfair Display">Playfair Display</option>
-          <option value="Cormorant Garamond">Cormorant Garamond</option>
-          <option value="Lora">Lora</option>
-          <option value="Georgia">Georgia (system)</option>
-        </optgroup>
-      </select>
-
-      <div class="checkbox-row" id="italicRow">
-        <input type="checkbox" id="italicFirst">
-        <label for="italicFirst">Italicize first line</label>
-      </div>
-
-      <div id="alignRowWrap">
-        <label>Text alignment</label>
-        <select id="alignSelect">
-          <option value="left">Left</option>
-          <option value="center">Center</option>
-        </select>
-      </div>
-
-
-      <button id="downloadBtn">Download PNG</button>
-    </div>
-
-    <div class="canvas-holder">
-      <canvas id="cardCanvas" width="1254" height="1254"></canvas>
-    </div>
-
-
-    <div>
-      <label for="configText">Config (JSON)</label>
-      <textarea id="configText" rows="20"></textarea>
-      <button id="applyConfigBtn">Apply Config</button>
-    </div>
+  <div id="root">
   </div>
-
-
-  <script type="module" src="dist/script.js"> </script>
+  <script type="module" src="/src/main.tsx"> </script>
 
 </body>
 

@@ -1,18 +1,28 @@
 {
   "name": "quote_generator",
   "version": "1.0.0",
-  "type" : "module",
+  "type": "module",
   "description": "",
-  "main": "src/script.js",
   "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview",
     "test": "echo 'Error: no test specified' && exit 1",
-    "build": "tsc",
     "watch": "tsc --watch"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "devDependencies": {
-    "typescript": "^7.0.2"
+    "@types/node": "^26.2.0",
+    "@types/react": "^19.2.18",
+    "@types/react-dom": "^19.2.4",
+    "@vitejs/plugin-react": "^6.1.0",
+    "typescript": "^7.0.2",
+    "vite": "^8.2.2"
+  },
+  "dependencies": {
+    "react": "^19.2.8",
+    "react-dom": "^19.2.8"
   }
 }
