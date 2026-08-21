@@ -1,15 +1,19 @@
+import { useRef } from "react";
+import SelectComponent from "./shared/components/ui/select";
+
 const App = () => {
+  const canvasRef = useRef<HTMLCanvasElement>(null);
+
   return (
     <div>
       <div className="wrap">
         <div className="panel">
           <h1>Quote Card Generator</h1>
           <label>Style</label>
-          <select id="styleSelect">
-            <option value="paper">
-              Paper Texture (photo-style, italic lead-in)
-            </option>
-          </select>
+          <SelectComponent
+            id="styleSheet"
+            options={[{ key: "Paper Texture", value: "paper" }]}
+          />
           <label>Quote text</label>
           <textarea id="quoteText" rows={10}>
             "You know you really love someone, when you don't hate them for
@@ -60,7 +64,12 @@ const App = () => {
         </div>
 
         <div className="canvas-holder">
-          <canvas id="cardCanvas" width="1254" height="1254"></canvas>
+          <canvas
+            id="cardCanvas"
+            width="1254"
+            height="1254"
+            ref={canvasRef}
+          ></canvas>
         </div>
 
         <div>

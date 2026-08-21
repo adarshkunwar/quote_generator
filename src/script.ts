@@ -5,6 +5,7 @@ import { createGradient, createGrain, createVignette } from "./background.js";
 const configTextarea = document.getElementById(
   "configText",
 ) as HTMLTextAreaElement;
+console.log(configTextarea);
 configTextarea.value = JSON.stringify(CONFIG, null, 2);
 
 let config = CONFIG;
