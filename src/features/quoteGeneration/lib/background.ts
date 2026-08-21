@@ -1,4 +1,4 @@
-import { type TClamp } from "@/shared/utils/NumberManipulation";
+import { type TClamp } from "../../../shared/utils/NumberManipulation";
 import type { TGradientElement, TVignetteElement } from "../types/background";
 
 export function createGradient(
